@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Special Surprise</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f9ff;
+            background-image: linear-gradient(to bottom right, #f0f9ff, #d6f0ff);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #3a8ee8;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            opacity: 0;
+            transition: opacity 1s ease;
+            font-size: 2.5em;
+        }
+        
+        .secret-box {
+            margin: 20px auto;
+            padding: 15px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            max-width: 400px;
+            opacity: 1;
+            transition: all 0.5s ease;
+        }
+        
+        .secret-box input {
+            padding: 10px 15px;
+            border: 2px solid #3a8ee8;
+            border-radius: 5px;
+            width: 70%;
+            font-size: 16px;
+            outline: none;
+        }
+        
+        .secret-box button {
+            padding: 10px 15px;
+            background-color: #3a8ee8;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            margin-left: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .secret-box button:hover {
+            background-color: #2e7dd6;
+            transform: scale(1.05);
+        }
+        
+        .heart-container {
+            position: relative;
+            width: 100%;
+            height: 600px;
+            margin: 20px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 2s ease;
+            perspective: 1000px;
+        }
+        
+        .audio-heart {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60%;
+            height: 60%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 5;
+        }
+        
+        .audio-controls {
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(58, 142, 232, 0.3);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            transition: all 0.5s ease;
+        }
+        
+        .audio-controls h3 {
+            color: #3a8ee8;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+        
+        .playlist-controls {
+            margin: 15px 0;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .playlist-controls button {
+            background-color: #3a8ee8;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .playlist-controls button:hover {
+            background-color: #2e7dd6;
+            transform: scale(1.1);
+        }
+        
+        .playlist-info {
+            margin-top: 10px;
+            color: #3a8ee8;
+            font-size: 0.9em;
+        }
+        
+        .heart {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background-color: #3a8ee8;
+            transform: rotate(45deg);
+            opacity: 0;
+            transition: all 0.5s ease;
+            z-index: 1;
+        }
+        
+        .heart::before,
+        .heart::after {
+            content: '';
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background-color: #3a8ee8;
+            border-radius: 50%;
+        }
+        
+        .heart::before {
+            left: -15px;
+        }
+        
+        .heart::after {
+            top: -15px;
+        }
+        
+        .flower {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #9ecbff;
+            opacity: 0;
+            transition: all 0.5s ease;
+            z-index: 1;
+        }
+        
+        .flower::before,
+        .flower::after,
+        .flower span::before,
+        .flower span::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #9ecbff;
+        }
+        
+        .flower::before {
+            top: -10px;
+            left: 0;
+        }
+        
+        .flower::after {
+            top: 10px;
+            left: 0;
+        }
+        
+        .flower span::before {
+            top: 0;
+            left: -10px;
+        }
+        
+        .flower span::after {
+            top: 0;
+            left: 10px;
+        }
+        
+        .center-heart {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background-color: rgba(58, 142, 232, 0.2);
+            transform: rotate(45deg) scale(0);
+            opacity: 0;
+            transition: all 1s ease;
+            z-index: 2;
+        }
+        
+        .center-heart::before,
+        .center-heart::after {
+            content: '';
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background-color: rgba(58, 142, 232, 0.2);
+            border-radius: 50%;
+        }
+        
+        .center-heart::before {
+            left: -50px;
+        }
+        
+        .center-heart::after {
+            top: -50px;
+        }
+
+        .message {
+            position: fixed;
+            bottom: 15px;
+            left: 0;
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #3a8ee8;
+            padding: 15px 20px;
+            font-size: 18px;
+            text-align: center;
+            box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 1s ease, transform 0.5s ease;
+            transform: translateY(100%);
+            display: none;
+        }
+
+        /* Add this to show the message properly */
+        .message.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        
+        .track-title {
+            color: #3a8ee8;
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .volume-control {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .volume-control input {
+            width: 100px;
+            accent-color: #3a8ee8;
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #3a8ee8;
+            opacity: 0.8;
+            border-radius: 50%;
+            animation: fall 4s ease-in infinite;
+        }
+        
+        @keyframes fall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        footer {
+            margin-top: 30px;
+            color: #3a8ee8;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+        
+        .transition-effect {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(58, 142, 232, 0.1);
+            opacity: 0;
+            z-index: 3;
+            pointer-events: none;
+        }
+        
+        .pulsate {
+            animation: pulsate 1s ease-in-out;
+        }
+        
+        @keyframes pulsate {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .fade-rotate {
+            animation: fadeRotate 1s ease-in-out;
+        }
+        
+        @keyframes fadeRotate {
+            0% { transform: rotate(0deg); opacity: 0.8; }
+            100% { transform: rotate(360deg); opacity: 0; }
+        }
+        
+        .progress-container {
+            width: 100%;
+            height: 5px;
+            background-color: #cae6ff;
+            border-radius: 5px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            width: 0;
+            background-color: #3a8ee8;
+            border-radius: 5px;
+            transition: width 0.1s linear;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Please Enter The Secret Word</h1>
+        
+        <div class="secret-box">
+            <input type="text" id="secretInput" placeholder="কি নামে ডাকি তোমায়?...">
+            <button id="checkButton">Reveal</button>
+        </div>
+        
+        <div class="heart-container" id="heartContainer">
+            <div class="center-heart" id="centerHeart"></div>
+            <div class="transition-effect" id="transitionEffect"></div>
+            <div class="audio-heart">
+                <div class="audio-controls">
+                    <div class="track-title" id="trackTitle">Ready to play your special playlist</div>
+                    <audio id="audioPlayer"></audio>
+                    <div class="progress-container">
+                        <div class="progress-bar" id="progressBar"></div>
+                    </div>
+                    <div class="playlist-controls">
+                        <button id="prevButton">←</button>
+                        <button id="playButton">▶</button>
+                        <button id="nextButton">→</button>
+                    </div>
+                    <div class="volume-control">
+                        <span>🔊</span>
+                        <input type="range" id="volumeControl" min="0" max="1" step="0.1" value="0.7">
+                    </div>
+                    <div class="playlist-info">
+                        Track <span id="currentTrack">0</span> of <span id="totalTracks">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="message" id="message"></div>
+        
+        <footer>Created with love, just for Puplu ❤️</footer>
+    </div>
+    
+    <script>
+        // Audio track names - replace with your actual MP3 filenames
+        const audioTracks = [
+            "Amar Mohakashe (আমর মহকশ)  Dakghor Suhotro, Ditipriya Durnibar, Shibasish hoichoi SVF Music.mp3",
+            "Bawara Mann ( Hazaaron Khwahishien aisi ) [U76th4F1nzQ].mp3",
+            "Bhindeshi tara   YouTube.mp3",
+            "Charulata - Ami Chini Go Chini Tomare (English Subtitles) HD  Kishore Kumar  Satyajit Ray.mp3",
+            "Ei Raat Tomar Amar - Romantic Bangla Song.mp3",
+            "Full Song_ Pehla Pyaar  Kabir Singh  Shahid Kapoor, Kiara Advani  Armaan Malik  Vishal Mishra.mp3",
+            "Gopon Premika Taalpatar Shepai.mp3",
+            "GUNCHA KOI MERE NAM KAR GAYA(Movie_ Main, Meri Patni Aur Woh).MPG.mp3",
+            "Ishq Hai  Mismatched Season 3  Netflix  Rohit Saraf  Prajakta Koli.mp3",
+            "Jaan Nisaar - Lyrical  Kedarnath Arijit Singh  Sushant Singh Rajput  Sara Ali Khan Amit Trivedi.mp3",
+            "Jodi Takey Chai  Lyrical  Tansener Tanpura 2  Vikram-Rupsa Arunita Joy Sarkar Srijato hoichoi.mp3",
+            "Joy of Little Things - When Chai Met Toast - High on Music.mp3",
+            "Katy Perry - Teenage Dream (Official Music Video).mp3",
+            "Ki Name Deke Bolbo Tomake With Lyrics  Shyamal Mitra.mp3",
+            "Lady Gaga, Bruno Mars - Die With A Smile (Official Music Video).mp3",
+            "Mera Kuchh Samaan  Asha Bhosle  R.D. Burman  Gulzar  Old Hindi Song.mp3",
+            "Mukh Pheray Na Mon-মখ ফরয ন মন  Official Lyrical Video  Olpo holeo sotti  Sahana Bajpaie.mp3",
+            "Roposo Jamroom  Yaad_ Sonu Nigam, Mukund Suryawanshi, Saaveri Verma  Jam8.mp3",
+            "Sang Tere  Aishwarya Pandit  Dipankar M & Himakshi K  Anjana Ankur S  Rajesh N  Ashique Elahi.mp3"
+        ];
+        
+        // Track titles - replace with your actual song titles
+        const trackTitles = [
+            "Our First Song",
+            "That Night",
+            "The Way You Smile",
+            "Forever and Always",
+            "When We First Met",
+            "Dancing in the Moonlight",
+            "Beautiful Memories",
+            "Thinking of You",
+            "Special Moments",
+            "Love Story",
+            "Sweet Lullaby",
+            "My Heart is Yours",
+            "Dreaming of Us",
+            "Perfect Day",
+            "The First Kiss",
+            "Endless Love",
+            "You and Me",
+            "Summer Romance",
+            "Our Song"
+        ];
+        
+        // Personal message
+        const personalMessage = "প্রতিদিন তোমার সাথে কাটানো সময় যেন এক স্বপ্নের মতো। আর এই স্বপ্নের রাজ্যের কিছু গান আজ আমি তোমার জন্য বাক্সবন্দী করলাম। কিছু তোমার, কিছু আমার, এই নিয়েই হোক আমাদের ছোট্ট ঘর! ❤️"
+        
+        // Secret word (lowercase for case-insensitive comparison)
+        const secretWord = "puplu";
+        
+        // DOM elements
+        const secretInput = document.getElementById('secretInput');
+        const checkButton = document.getElementById('checkButton');
+        const heartContainer = document.getElementById('heartContainer');
+        const messageElement = document.getElementById('message');
+        const h1 = document.querySelector('h1');
+        const footer = document.querySelector('footer');
+        const secretBox = document.querySelector('.secret-box');
+        const audioPlayer = document.getElementById('audioPlayer');
+        const playButton = document.getElementById('playButton');
+        const prevButton = document.getElementById('prevButton');
+        const nextButton = document.getElementById('nextButton');
+        const volumeControl = document.getElementById('volumeControl');
+        const trackTitle = document.getElementById('trackTitle');
+        const currentTrack = document.getElementById('currentTrack');
+        const totalTracks = document.getElementById('totalTracks');
+        const progressBar = document.getElementById('progressBar');
+        const centerHeart = document.getElementById('centerHeart');
+        const transitionEffect = document.getElementById('transitionEffect');
+
+        // Audio player variables
+        let currentTrackIndex = 0;
+        let isPlaying = false;
+
+        // Initialize playlist
+        totalTracks.textContent = audioTracks.length;
+        currentTrack.textContent = "0";
+
+        // Create hearts and flowers
+        function createHeartFlowerElements() {
+            const numElements = 50;
+            const heartContainer = document.getElementById('heartContainer');
+            
+            // Create hearts
+            for (let i = 0; i < numElements; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart';
+                heart.style.left = Math.random() * 90 + 5 + '%';
+                heart.style.top = Math.random() * 90 + 5 + '%';
+                heart.style.transform = `rotate(45deg) scale(${Math.random() * 0.5 + 0.5})`;
+                heartContainer.appendChild(heart);
+            }
+            
+            // Create flowers
+            for (let i = 0; i < numElements; i++) {
+                const flower = document.createElement('div');
+                flower.className = 'flower';
+                flower.style.left = Math.random() * 90 + 5 + '%';
+                flower.style.top = Math.random() * 90 + 5 + '%';
+                flower.style.transform = `scale(${Math.random() * 0.5 + 0.5})`;
+                
+                const span = document.createElement('span');
+                flower.appendChild(span);
+                
+                heartContainer.appendChild(flower);
+            }
+        }
+
+        // Create confetti
+        function createConfetti() {
+            const colors = ['#e83a6f', '#ff9eb5', '#ffcad4', '#f4aeba', '#e06377', '#c83349'];
+            
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.animationDelay = Math.random() * 4 + 's';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                document.body.appendChild(confetti);
+            }
+        }
+
+        // Animate hearts and flowers
+        function animateElements() {
+            const hearts = document.querySelectorAll('.heart');
+            const flowers = document.querySelectorAll('.flower');
+            
+            // Animate with music beat timing (approximately every 2 seconds)
+            setInterval(() => {
+                // Randomly select elements to animate
+                const randomHeartIndex = Math.floor(Math.random() * hearts.length);
+                const randomFlowerIndex = Math.floor(Math.random() * flowers.length);
+                
+                if (hearts[randomHeartIndex]) {
+                    hearts[randomHeartIndex].style.opacity = '0.8';
+                    hearts[randomHeartIndex].style.transform = `rotate(45deg) scale(${Math.random() * 0.5 + 1})`;
+                    setTimeout(() => {
+                        hearts[randomHeartIndex].style.opacity = '0';
+                        hearts[randomHeartIndex].style.transform = 'rotate(45deg) scale(0.5)';
+                    }, 1500);
+                }
+                
+                if (flowers[randomFlowerIndex]) {
+                    flowers[randomFlowerIndex].style.opacity = '0.8';
+                    flowers[randomFlowerIndex].style.transform = `scale(${Math.random() * 0.5 + 1})`;
+                    setTimeout(() => {
+                        flowers[randomFlowerIndex].style.opacity = '0';
+                        flowers[randomFlowerIndex].style.transform = 'scale(0.5)';
+                    }, 1500);
+                }
+            }, 300);
+            
+            // Center heart pulsing animation
+            centerHeart.style.opacity = '1';
+            centerHeart.style.transform = 'rotate(45deg) scale(1)';
+            
+            setInterval(() => {
+                centerHeart.classList.add('pulsate');
+                setTimeout(() => {
+                    centerHeart.classList.remove('pulsate');
+                }, 1000);
+            }, 2000);
+        }
+
+        // Play audio track
+        function playTrack(index) {
+            currentTrackIndex = index;
+            audioPlayer.src = audioTracks[index];
+            trackTitle.textContent = trackTitles[index];
+            currentTrack.textContent = (index + 1).toString();
+            
+            audioPlayer.play().then(() => {
+                isPlaying = true;
+                playButton.textContent = '❚❚';
+            }).catch(error => {
+                console.error('Error playing audio:', error);
+            });
+        }
+
+        // Update progress bar
+        function updateProgressBar() {
+            if (audioPlayer.duration) {
+                const progress = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+                progressBar.style.width = progress + '%';
+            }
+        }
+
+        // Create transition effect between songs
+        function createTransition() {
+            transitionEffect.style.opacity = '0.8';
+            transitionEffect.style.backgroundColor = `rgba(232, 58, 111, ${Math.random() * 0.3 + 0.1})`;
+            transitionEffect.classList.add('fade-rotate');
+            
+            // Change center heart color
+            const colors = ['#e83a6f', '#ff9eb5', '#ffcad4', '#f4aeba', '#e06377'];
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+            centerHeart.style.backgroundColor = `rgba(${hexToRgb(randomColor)}, 0.3)`;
+            
+            // Scale effect
+            centerHeart.style.transform = 'rotate(45deg) scale(1.5)';
+            setTimeout(() => {
+                centerHeart.style.transform = 'rotate(45deg) scale(1)';
+                transitionEffect.style.opacity = '0';
+                transitionEffect.classList.remove('fade-rotate');
+            }, 1000);
+        }
+
+        // Helper function to convert hex to rgb
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? 
+                parseInt(result[1], 16) + ',' + parseInt(result[2], 16) + ',' + parseInt(result[3], 16) :
+                '232, 58, 111';
+        }
+
+        // Handle secret word check
+        checkButton.addEventListener('click', checkSecret);
+        secretInput.addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                checkSecret();
+            }
+        });
+
+        function checkSecret() {
+            if (secretInput.value.toLowerCase().replace(/\s+/g, '') === secretWord) {
+                revealSurprise();
+            } else {
+                secretInput.style.borderColor = '#ff0000';
+                setTimeout(() => {
+                    secretInput.style.borderColor = '#e83a6f';
+                }, 1000);
+            }
+        }
+
+        function revealSurprise() {
+            // Update UI
+            h1.textContent = "আমার এক ফালি চাঁদ";
+            h1.style.opacity = '1';
+            footer.style.opacity = '1';
+            secretBox.style.opacity = '0';
+            
+            setTimeout(() => {
+                secretBox.classList.add('hidden');
+                heartContainer.style.opacity = '1';
+                
+                // Create hearts and flowers
+                createHeartFlowerElements();
+                
+                // Initialize audio player
+                audioPlayer.volume = volumeControl.value;
+                totalTracks.textContent = audioTracks.length;
+                
+                // Start animations
+                animateElements();
+                
+                // Start playing the first song after a slight delay
+                setTimeout(() => {
+                    playTrack(0);
+                }, 1000);
+                
+                // Show message after audio starts
+                setTimeout(() => {
+                    messageElement.textContent = personalMessage;
+                    messageElement.style.display = 'block';
+                    setTimeout(() => {
+                        messageElement.classList.add('show');
+                        createConfetti();
+                    }, 500);
+                }, 5000);
+            }, 500);
+        }
+
+        // Audio player event listeners
+        playButton.addEventListener('click', () => {
+            if (isPlaying) {
+                audioPlayer.pause();
+                playButton.textContent = '▶';
+                isPlaying = false;
+            } else {
+                if (currentTrack.textContent === "0") {
+                    playTrack(0);
+                } else {
+                    audioPlayer.play();
+                    playButton.textContent = '❚❚';
+                    isPlaying = true;
+                }
+            }
+        });
+
+        prevButton.addEventListener('click', () => {
+            let prevIndex = currentTrackIndex - 1;
+            if (prevIndex < 0) prevIndex = audioTracks.length - 1;
+            createTransition();
+            setTimeout(() => {
+                playTrack(prevIndex);
+            }, 500);
+        });
+
+        nextButton.addEventListener('click', () => {
+            let nextIndex = currentTrackIndex + 1;
+            if (nextIndex >= audioTracks.length) nextIndex = 0;
+            createTransition();
+            setTimeout(() => {
+                playTrack(nextIndex);
+            }, 500);
+        });
+
+        volumeControl.addEventListener('input', () => {
+            audioPlayer.volume = volumeControl.value;
+        });
+
+        // Update progress bar as song plays
+        audioPlayer.addEventListener('timeupdate', updateProgressBar);
+
+        // Auto-play next track when current track ends
+        audioPlayer.addEventListener('ended', () => {
+            let nextIndex = currentTrackIndex + 1;
+            if (nextIndex >= audioTracks.length) nextIndex = 0;
+            createTransition();
+            setTimeout(() => {
+                playTrack(nextIndex);
+            }, 500);
+        });
+
+</script>
+</body>
+</html>
